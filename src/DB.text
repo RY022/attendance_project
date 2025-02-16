@@ -1,0 +1,26 @@
+CREATE TABLE users (
+    -> user_id int NOT NULL,
+    -> user_name VARCHAR(50) NOT NULL,
+    -> password VARCHAR(255) NOT NULL,
+    -> role int NOT NULL,
+    -> PRIMARY KEY (user_id)
+    -> );
+    
+CREATE TABLE attendance_records (
+    -> user_id int NOT NULL,
+    -> user_name VARCHAR(50) NOT NULL,
+    -> work_date varchar(14) NOT NULL,
+    -> start_time int NOT NULL,
+    -> end_time int NOT NULL,
+    -> work_hours int NOT NULL,
+    -> PRIMARY KEY (user_id)
+    -> );
+    
+CREATE TABLE overtime_requests (
+    -> user_id int NOT NULL,
+    -> user_name VARCHAR(50) NOT NULL,
+    -> overtime_start int NOT NULL,
+    -> overtime_end int NOT NULL,
+    -> overtime_reason VARCHAR(255) NOT NULL,
+    -> PRIMARY KEY (user_id)
+    -> );
