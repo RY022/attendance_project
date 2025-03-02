@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link th:href="@{/css/style.css}" rel="stylesheet">
+<body>
+<form method="post" th:action="file:///C:/pleiades/2024-09/workspace/Attendance_project/src/main/project/html/loginpage.html">
+  <p>ユーザーID</p>
+  <div class="control">
+   <input type="text" name="userid" th:value="*{userID}" required="required">
+  </div>
+   
+  <p>パスワード</p>
+  <div class="control">
+  <input type="text" name="password" th:value="*{password}" required="required">
+  </div>
+  <button class="button_login" type="submit">ログイン</button>
+</form>
+</head>
+</body>
+</html>
