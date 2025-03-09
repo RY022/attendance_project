@@ -4,18 +4,15 @@
 <meta charset="UTF-8">
 <link th:href="@{/css/style.css}" rel="stylesheet">
 <body>
-<form method="post" th:action="file:///C:/pleiades/2024-09/workspace/Attendance_project/src/main/project/html/registration.html">
-  <p>ユーザーID</p>
-  <div class="control">
-   <input type="text" name="userid" th:value="*{userID}" required="required">
-  </div>
-   
-  <p>パスワード</p>
-  <div class="control">
-  <input type="text" name="password" th:value="*{password}" required="required">
-  </div>
-  <button class="button_registration" type="submit">新規登録</button>
-</form>
-</head>
+<div id="wrapper">
+  <form action="index.php" method="POST">
+    <p>ユーザーID</p>
+    <input type="text" name="userid">
+	<p>パスワード</p>
+	<input type="text" name="password">
+	<input type="submit" name="registration" value="新規登録">
+  </form>
+</div>
 </body>
+</head>
 </html>
