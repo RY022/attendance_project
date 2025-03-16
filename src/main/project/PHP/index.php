@@ -44,35 +44,3 @@ if(!empty($_POST['password'])){
     }
 }
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<link th:href="@{/css/style.css}" rel="stylesheet">
-<body>
-<div id="wrapper">
-
-<div id="input_form">
-  <form action="index.php" method="POST">
-    <input type="text" name="userid">
-    <input type="text" name="password">
-    <input type="submit" name="registration" value="新規登録">
-  </form>
-</div>
-
-<div id="drag-area">
-<?php
-$sql = 'SELECT * FROM sortable';
-$stmt = $dbh->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-foreach ($stmt as $result){
-  echo '  <div class="drag" data-num="'.$result['id'].'" style="left:'.$result['left_x'].'px; top:'.$result['top_y'].'px;">'.PHP_EOL;
-  echo '    <p><span class="name">'.$result['id'].' '.$result['name'].'</span></p>'.PHP_EOL;
-  echo '  </div>'.PHP_EOL;
-}
-?>
-</div>
-</div>
-</body>
-</head>
-</html>
