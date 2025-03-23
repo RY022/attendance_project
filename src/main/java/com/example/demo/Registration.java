@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class UserDatabase {
+public class Registration {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/cri_sortable?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = "root";

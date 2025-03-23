@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class LoginServlet extends HttpServlet {
+public class Logincertification extends HttpServlet {
     // Hardcoded credentials
     private static final String CORRECT_USERID = "user_id";
     private static final String CORRECT_PASSWORD = "password";
