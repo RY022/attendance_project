@@ -11,8 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/LoginServlet")
-public class Login extends HttpServlet {
+@WebServlet("/CustomerRegisterServlet")
+public class EmployeeRegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -22,35 +22,28 @@ public class Login extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		response.setContentType("text/html; charset=UTF-8");
 		request.setCharacterEncoding("UTF-8");
 
 		String userid = request.getParameter("user_id");
 		String password = request.getParameter("password");
 
+		HttpSession session = request.getSession(true);
+		Admin admin = (Admin) session.getAttribute("admin");
+
+		Register register = new Register();
+
+		register.employee_register(admin.getId(), customer_name, customer_address);
+
 		Login login = new Login();
-		Admin admin = login.check(userid, password);
+		List<Employee> employee = null;
 
-		if(admin.isLogin_flag()) {
-			System.out.println("ログイン成功");
+		employee = login.getCustomerInfo(String.valueOf(admin.getId()));
 
-			HttpSession admin_session = request.getSession(true);
-			admin_session.setAttribute("user_id", admin);
+		request.setAttribute("customer", employee);
 
-			List<Employee> employee = null;
-			employee = login.getCustomerInfo(user_id);
-
-			request.setAttribute("employee", employee);
-
-			RequestDispatcher dispatcher =
-					request.getRequestDispatcher("loginpage.html");
-			dispatcher.forward(request, response);
-		} else {
-			System.out.println("ログイン失敗");
-			RequestDispatcher dispatcher =
-					request.getRequestDispatcher("loginpage.html");
-			dispatcher.forward(request, response);
-		}
+		RequestDispatcher dispatcher =
+				request.getRequestDispatcher("loginpage.html");
+		dispatcher.forward(request, response);
 	}
 }
