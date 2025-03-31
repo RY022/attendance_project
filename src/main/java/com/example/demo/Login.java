@@ -40,7 +40,6 @@ public class Login extends HttpServlet {
 
 			List<Employee> employee = null;
 			employee = login.getCustomerInfo(user_id);
-
 			request.setAttribute("employee", employee);
 
 			RequestDispatcher dispatcher =

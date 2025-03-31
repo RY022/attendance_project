@@ -28,7 +28,6 @@ public class Register {
 				stmt.setString(2, name);
 				stmt.setString(3, password);
 				stmt.executeUpdate();
-
 				conn.commit();
 				System.out.println("コミット処理を行いました");
 			} catch (SQLException e) {

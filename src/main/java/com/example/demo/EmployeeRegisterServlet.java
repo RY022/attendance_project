@@ -39,7 +39,6 @@ public class EmployeeRegisterServlet extends HttpServlet {
 		List<Employee> employee = null;
 
 		employee = login.getCustomerInfo(String.valueOf(admin.getId()));
-
 		request.setAttribute("customer", employee);
 
 		RequestDispatcher dispatcher =
