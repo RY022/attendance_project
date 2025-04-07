@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <link th:href="@{/css/style.css}" rel="stylesheet">
 <body>
-<form method="post" th:action="file:///C:/pleiades/2024-09/workspace/Attendance_project/src/main/project/html/loginpage.html">
+String failureMessage = (String)request.getAttribute("loginFailure");
+if (failureMessage != null) {
+    =failureMessage } 
+
+  <form method="post" th:action="file:///C:/pleiades/2024-09/workspace/Attendance_project/src/main/project/html/loginpage.html">
   <p>ユーザーID</p>
   <div class="control">
    <input type="text" name="userid" th:value="*{userID}" required="required">

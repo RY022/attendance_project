@@ -13,43 +13,49 @@ import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/LoginServlet")
 public class Login extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher dispatcher =
-				request.getRequestDispatcher("loginpage.html");
-		dispatcher.forward(request, response);
-	}
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    request.getRequestDispatcher("loginpage.html").forward(request, response);
+  }
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		response.setContentType("text/html; charset=UTF-8");
-		request.setCharacterEncoding("UTF-8");
+    String id = request.getParameter("user_id");
+    String password = request.getParameter("password");
 
-		String userid = request.getParameter("user_id");
-		String password = request.getParameter("password");
+    String path = "menupage.html";
 
-		Login login = new Login();
-		Admin admin = login.check(userid, password);
+    try {
+        String url = "jdbc:mysql://localhost:3306/attendance_project";
+        String user = "root";
+        String pass = "chaki8044";
 
-		if(admin.isLogin_flag()) {
-			System.out.println("ログイン成功");
+        String sql = "SELECT id FROM users WHERE id=? AND password=?";
 
-			HttpSession admin_session = request.getSession(true);
-			admin_session.setAttribute("user_id", admin);
+        Class.forName("org.postgresql.Driver");
+        try (Connection con = DriverManager.getConnection(url, user, pass);
+                PreparedStatement pstmt = con.prepareStatement(sql)) {
 
-			List<Employee> employee = null;
-			employee = login.getCustomerInfo(user_id);
-			request.setAttribute("employee", employee);
+            pstmt.setString(1, user_Id);
+            pstmt.setString(2, password);
 
-			RequestDispatcher dispatcher =
-					request.getRequestDispatcher("loginpage.html");
-			dispatcher.forward(request, response);
-		} else {
-			System.out.println("ログイン失敗");
-			RequestDispatcher dispatcher =
-					request.getRequestDispatcher("loginpage.html");
-			dispatcher.forward(request, response);
-		}
-	}
+            ResultSet res = pstmt.executeQuery();
+
+            if (res.next()) {
+                request.setAttribute("user_id", res.getString("id"));
+
+                path = "menupage.html";
+            } else {
+                request.setAttribute("loginFailure", "ログインに失敗しました");
+
+                path = "loginpage.htm";
+            }
+        }
+    }catch (ClassNotFoundException | SQLException e) {
+        e.printStackTrace();
+    }
+
+    RequestDispatcher rd = request.getRequestDispatcher(path);
+    rd.forward(request, response);
 }
