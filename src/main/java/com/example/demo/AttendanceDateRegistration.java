@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 public class AttendanceDateRegistration {
 
-    // Database connection details
     private static final String DB_URL = "jdbc:mysql://localhost:3306/attendance_users?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = "";
@@ -14,54 +13,46 @@ public class AttendanceDateRegistration {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Input: User ID, Workday, Start Time, End Time, Break Time
-        System.out.print("Enter User ID: ");
-        String userId = scanner.nextLine();
+        String work_date = scanner.nextLine();
+        String start_time = scanner.nextLine();
+        String end_time = scanner.nextLine();
+        String break_time = scanner.nextLine();
 
-        System.out.print("Enter Work Day (YYYY-MM-DD): ");
-        String workDay = scanner.nextLine();
+        String url = "jdbc:mysql://localhost:3306/attendance_user";
+        String user = "root";
+        String password = "chaki8044";
 
-        System.out.print("Enter Start Time (HH:MM:SS): ");
-        String startTime = scanner.nextLine();
-
-        System.out.print("Enter End Time (HH:MM:SS): ");
-        String endTime = scanner.nextLine();
-
-        System.out.print("Enter Break Time (HH:MM:SS): ");
-        String breakTime = scanner.nextLine();
-
-        // Call method to insert data into the database
-        insertAttendance(userId, workDay, startTime, endTime, breakTime);
-
-        scanner.close();
-    }
-
-    // Method to insert attendance data into the database
-    public static void insertAttendance(String userId, String workDay, String startTime, String endTime, String breakTime) {
-        String sql = "INSERT INTO attendance (user_id, work_day, start_time, end_time, break_time) VALUES (?, ?, ?, ?, ?)";
-
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            // Set the values for the prepared statement
-            stmt.setString(1, userId);
-            stmt.setString(2, workDay);
-            stmt.setString(3, startTime);
-            stmt.setString(4, endTime);
-            stmt.setString(5, breakTime);
-
-            // Execute the insertion
-            int rowsAffected = stmt.executeUpdate();
-
-            // Check if the insertion was successful
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        
+        try {
+            connection = DriverManager.getConnection(url, user, password);
+            
+            String sql = "INSERT INTO work_log (work_date, start_time, end_time, break_time) VALUES (?, ?, ?, ?)";
+            preparedStatement = connection.prepareStatement(sql);
+            
+            preparedStatement.setString(1,work_date);
+            preparedStatement.setString(2,start_time);
+            preparedStatement.setString(3,end_time);
+            preparedStatement.setInt(4,break_time);
+            
+            int rowsAffected = preparedStatement.executeUpdate();
+            
             if (rowsAffected > 0) {
-                System.out.println("Attendance record successfully added.");
+                System.out.println("登録されました。");
             } else {
-                System.out.println("Failed to add attendance record.");
+                System.out.println("登録に失敗しました。");
             }
-
         } catch (SQLException e) {
-            System.out.println("Error while inserting attendance: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
+        scanner.close();
     }
 }
