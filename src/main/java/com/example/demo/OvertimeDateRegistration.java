@@ -6,62 +6,45 @@ import java.util.Scanner;
 
 public class OvertimeDateRegistration {
 
-    // Database connection details
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/attendance_users?useSSL=false&serverTimezone=UTC";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+	 private static final String DB_URL = "jdbc:mysql://localhost:3306/attendance_users?useSSL=false&serverTimezone=UTC";
+	 private static final String USER = "root";
+	 private static final String PASSWORD = "";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
-        // Input: User ID, Overtime Date, Overtime Start Time, Overtime End Time, Overtime Reason
-        System.out.print("Enter User ID: ");
-        String userId = scanner.nextLine();
-
-        System.out.print("Enter Overtime Date (YYYY-MM-DD): ");
-        String overtimeDate = scanner.nextLine();
-
-        System.out.print("Enter Overtime Start Time (HH:MM:SS): ");
-        String overtimeStartTime = scanner.nextLine();
-
-        System.out.print("Enter Overtime End Time (HH:MM:SS): ");
-        String overtimeEndTime = scanner.nextLine();
-
-        System.out.print("Enter Overtime Reason: ");
-        String overtimeReason = scanner.nextLine();
-
-        // Call method to insert overtime data into the database
-        insertOvertime(userId, overtimeDate, overtimeStartTime, overtimeEndTime, overtimeReason);
-
-        scanner.close();
-    }
-
-    // Method to insert overtime data into the database
-    public static void insertOvertime(String userId, String overtimeDate, String overtimeStartTime, String overtimeEndTime, String overtimeReason) {
-        String sql = "INSERT INTO overtime (user_id, overtime_date, overtime_start_time, overtime_end_time, overtime_reason) VALUES (?, ?, ?, ?, ?)";
-
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            // Set the values for the prepared statement
-            stmt.setString(1, userId);
-            stmt.setString(2, overtimeDate);
-            stmt.setString(3, overtimeStartTime);
-            stmt.setString(4, overtimeEndTime);
-            stmt.setString(5, overtimeReason);
-
-            // Execute the insertion
-            int rowsAffected = stmt.executeUpdate();
-
-            // Check if the insertion was successful
-            if (rowsAffected > 0) {
-                System.out.println("Overtime record successfully added.");
-            } else {
-                System.out.println("Failed to add overtime record.");
+        
+        String overtime_date = scanner.nextLine();
+        String start_time = scanner.nextLine();
+        String end_time = scanner.nextLine();
+        String reason = scanner.nextLine();
+        
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            String sql = "INSERT INTO overtime (overtime_date, start_time, end_time, reason) VALUES (?, ?, ?, ?)";
+            
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1,overtime_date);
+                stmt.setString(2,start_time);
+                stmt.setString(3,end_time);
+                stmt.setString(4,reason);
+                
+                int rowsAffected = preparedStatement.executeUpdate();
+                
+                if (rowsAffected > 0) {
+                    System.out.println("登録されました。");
+                } else {
+                    System.out.println("登録に失敗しました。");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (preparedStatement != null) preparedStatement.close();
+                    if (connection != null) connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-
-        } catch (SQLException e) {
-            System.out.println("Error while inserting overtime: " + e.getMessage());
+            scanner.close();
         }
     }
 }
