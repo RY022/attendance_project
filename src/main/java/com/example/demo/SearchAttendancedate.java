@@ -1,63 +1,45 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Time;
 import java.util.Scanner;
 
 public class SearchAttendancedate {
-    // Database connection details
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/attendance_users?useSSL=false&serverTimezone=UTC";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+    String DB_URL = "jdbc:mysql://localhost:3306/attendance_users?useSSL=false&serverTimezone=UTC";
+    String USER = "root";
+    String PASSWORD = "";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Ask for the user ID to search for workdays
-        System.out.print("Enter User ID to search for workdays: ");
-        String userId = scanner.nextLine();
+        try {
+            Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("DBに接続しました。");
 
-        // Call method to search for workdays and print the results
-        List<String> workdays = getWorkdaysForUser(userId);
+            String sql = "SELECT * FROM attendance_date";
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
 
-        if (workdays.isEmpty()) {
-            System.out.println("No workdays found for user ID: " + userId);
-        } else {
-            System.out.println("Workdays for user ID " + userId + ":");
-            for (String workday : workdays) {
-                System.out.println(workday);
+            System.out.println("勤務データ一覧：");
+
+            while (resultSet.next()) {
+                int attendance_date = resultSet.getInt("attendance_date");
+                Date work_date = resultSet.getDate("work_date");
+                Time start_time = resultSet.getTime("start_time");
+                Time end_time = resultSet.getTime("end_time");
+                Time break_time = resultSet.getTime("break_time");
+                Time over_time = resultSet.getTime("over_time");
+
+                System.out.printf("日付: %d, 開始時間: %s, 終了時間: %s, 休憩時間: %s, 残業時間: %s\n",
+                    work_date, start_time.toString(), end_time.toString(), break_time.toString(), over_time.toString());
             }
-        }
-    }
 
-    // Method to get workdays for a specific user from the database
-    public static List<String> getWorkdaysForUser(String userId) {
-        List<String> workdays = new ArrayList<>();
-
-        // Establish connection to the database
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-            String sql = "SELECT work_day FROM attendance WHERE user_id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, userId); // Bind userId to the query
-
-                // Execute the query and get the result set
-                ResultSet resultSet = stmt.executeQuery();
-
-                // Process the result set and add workdays to the list
-                while (resultSet.next()) {
-                    String workDay = resultSet.getString("work_day");
-                    workdays.add(workDay);
-                }
-            } catch (SQLException e) {
-                System.out.println("Error while querying the database: " + e.getMessage());
-            }
+            resultSet.close();
+            statement.close();
+            connection.close();
         } catch (SQLException e) {
-            System.out.println("Error while connecting to the database: " + e.getMessage());
+            System.out.println("エラーが発生しました: " + e.getMessage());
         }
-
-        return workdays;
     }
 }

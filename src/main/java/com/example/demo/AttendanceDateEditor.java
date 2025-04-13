@@ -1,104 +1,84 @@
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.Scanner;
 
-public class AttendanceDateEditor {
-
-    // Database connection details
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/attendance_users?useSSL=false&serverTimezone=UTC";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+public class AttendanceUpdate {
 
     public static void main(String[] args) {
+        String jdbcURL = "jdbc:mysql://localhost:3306/your_database";
+        String dbUser = "your_username";
+        String dbPassword = "your_password";
+
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Select operation:");
-        System.out.println("1. Edit Attendance");
-        System.out.println("2. Delete Attendance");
-        System.out.print("Enter choice (1 or 2): ");
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume newline character
+        try (Connection connection = DriverManager.getConnection(jdbcURL, dbUser, dbPassword)) {
+            System.out.println("DBに接続しました。");
 
-        if (choice == 1) {
-            // Edit Attendance
-            System.out.print("Enter User ID: ");
-            String userId = scanner.nextLine();
-            System.out.print("Enter Work Day (YYYY-MM-DD): ");
-            String workDay = scanner.nextLine();
-            System.out.print("Enter Start Time (HH:MM:SS): ");
-            String startTime = scanner.nextLine();
-            System.out.print("Enter End Time (HH:MM:SS): ");
-            String endTime = scanner.nextLine();
-            System.out.print("Enter Break Time (HH:MM:SS): ");
-            String breakTime = scanner.nextLine();
-            System.out.print("Enter Overtime (HH:MM:SS): ");
-            String overtime = scanner.nextLine();
+            // ID指定
+            System.out.print("編集したい勤務データのIDを入力してください: ");
+            int id = Integer.parseInt(scanner.nextLine());
 
-            editAttendance(userId, workDay, startTime, endTime, breakTime, overtime);
-        } else if (choice == 2) {
-            // Delete Attendance
-            System.out.print("Enter User ID: ");
-            String userId = scanner.nextLine();
-            System.out.print("Enter Work Day (YYYY-MM-DD): ");
-            String workDay = scanner.nextLine();
+            // 元データを表示
+            String selectSql = "SELECT * FROM work_attendance WHERE id = ?";
+            PreparedStatement selectStmt = connection.prepareStatement(selectSql);
+            selectStmt.setInt(1, id);
+            ResultSet rs = selectStmt.executeQuery();
 
-            deleteAttendance(userId, workDay);
-        } else {
-            System.out.println("Invalid choice. Exiting.");
-        }
+            if (!rs.next()) {
+                System.out.println("指定されたIDのデータが見つかりません。");
+                return;
+            }
 
-        scanner.close();
-    }
+            String oldName = rs.getString("employee_name");
+            Date oldDate = rs.getDate("date");
+            Time oldStart = rs.getTime("start_time");
+            Time oldEnd = rs.getTime("end_time");
 
-    // Method to edit attendance
-    public static void editAttendance(String userId, String workDay, String startTime, String endTime, String breakTime, String overtime) {
-        String sql = "UPDATE attendance SET start_time = ?, end_time = ?, break_time = ?, overtime = ? WHERE user_id = ? AND work_day = ?";
+            System.out.println("現在のデータ:");
+            System.out.printf("名前: %s, 日付: %s, 開始: %s, 終了: %s\n", oldName, oldDate, oldStart, oldEnd);
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // 入力（空欄なら元のまま）
+            System.out.print("新しい名前（そのままならEnter）: ");
+            String name = scanner.nextLine();
+            if (name.isEmpty()) name = oldName;
 
-            stmt.setString(1, startTime);
-            stmt.setString(2, endTime);
-            stmt.setString(3, breakTime);
-            stmt.setString(4, overtime);
-            stmt.setString(5, userId);
-            stmt.setString(6, workDay);
+            System.out.print("新しい日付 (yyyy-mm-dd): ");
+            String dateStr = scanner.nextLine();
+            Date date = dateStr.isEmpty() ? oldDate : Date.valueOf(dateStr);
 
-            int rowsAffected = stmt.executeUpdate();
+            System.out.print("新しい開始時間 (HH:mm:ss): ");
+            String startStr = scanner.nextLine();
+            Time start = startStr.isEmpty() ? oldStart : Time.valueOf(startStr);
 
+            System.out.print("新しい終了時間 (HH:mm:ss): ");
+            String endStr = scanner.nextLine();
+            Time end = endStr.isEmpty() ? oldEnd : Time.valueOf(endStr);
+
+            // 更新クエリ
+            String updateSql = "UPDATE work_attendance SET employee_name = ?, date = ?, start_time = ?, end_time = ? WHERE id = ?";
+            PreparedStatement updateStmt = connection.prepareStatement(updateSql);
+            updateStmt.setString(1, name);
+            updateStmt.setDate(2, date);
+            updateStmt.setTime(3, start);
+            updateStmt.setTime(4, end);
+            updateStmt.setInt(5, id);
+
+            int rowsAffected = updateStmt.executeUpdate();
             if (rowsAffected > 0) {
-                System.out.println("Attendance record updated successfully.");
+                System.out.println("勤務データを更新しました！");
             } else {
-                System.out.println("No matching record found to update.");
+                System.out.println("更新に失敗しました。");
             }
 
         } catch (SQLException e) {
-            System.out.println("Error while editing attendance: " + e.getMessage());
-        }
-    }
-
-    // Method to delete attendance
-    public static void deleteAttendance(String userId, String workDay) {
-        String sql = "DELETE FROM attendance WHERE user_id = ? AND work_day = ?";
-
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, userId);
-            stmt.setString(2, workDay);
-
-            int rowsAffected = stmt.executeUpdate();
-
-            if (rowsAffected > 0) {
-                System.out.println("Attendance record deleted successfully.");
-            } else {
-                System.out.println("No matching record found to delete.");
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error while deleting attendance: " + e.getMessage());
+            System.out.println("DBエラー: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("入力形式エラー: " + e.getMessage());
         }
     }
 }
