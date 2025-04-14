@@ -7,66 +7,64 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Scanner;
 
-public class AttendanceUpdate {
+public class AttendanceDateEditor {
 
     public static void main(String[] args) {
         String jdbcURL = "jdbc:mysql://localhost:3306/your_database";
-        String dbUser = "your_username";
-        String dbPassword = "your_password";
+        String dbUser = "root";
+        String dbPassword = "";
 
         Scanner scanner = new Scanner(System.in);
 
         try (Connection connection = DriverManager.getConnection(jdbcURL, dbUser, dbPassword)) {
-            System.out.println("DBに接続しました。");
 
-            // ID指定
-            System.out.print("編集したい勤務データのIDを入力してください: ");
-            int id = Integer.parseInt(scanner.nextLine());
+            int date = Integer.parseInt(scanner.nextLine());
 
-            // 元データを表示
-            String selectSql = "SELECT * FROM work_attendance WHERE id = ?";
+            String selectSql = "SELECT * FROM attendance_records WHERE id = ?";
             PreparedStatement selectStmt = connection.prepareStatement(selectSql);
-            selectStmt.setInt(1, id);
+            selectStmt.setInt(1, date);
             ResultSet rs = selectStmt.executeQuery();
 
             if (!rs.next()) {
-                System.out.println("指定されたIDのデータが見つかりません。");
+                System.out.println("データが見つかりません。");
                 return;
             }
 
-            String oldName = rs.getString("employee_name");
             Date oldDate = rs.getDate("date");
-            Time oldStart = rs.getTime("start_time");
-            Time oldEnd = rs.getTime("end_time");
+            Time oldStarttime = rs.getTime("start_time");
+            Time oldEndtime = rs.getTime("end_time");
+            Time oldBreaktime = rs.getTime("break_time");
+            Time oldOvertime = rs.getTime("over_time");
 
-            System.out.println("現在のデータ:");
-            System.out.printf("名前: %s, 日付: %s, 開始: %s, 終了: %s\n", oldName, oldDate, oldStart, oldEnd);
+            System.out.printf("日付: %s, 開始時間: %s, 終了時間: %s, 休憩時間: %s, 残業時間: %s", oldDate, oldStarttime, oldEndtime, oldBreaktime, oldOvertime);
 
-            // 入力（空欄なら元のまま）
-            System.out.print("新しい名前（そのままならEnter）: ");
-            String name = scanner.nextLine();
-            if (name.isEmpty()) name = oldName;
-
-            System.out.print("新しい日付 (yyyy-mm-dd): ");
+            System.out.print("新しい日付 : ");
             String dateStr = scanner.nextLine();
-            Date date = dateStr.isEmpty() ? oldDate : Date.valueOf(dateStr);
+            Date workdate = dateStr.isEmpty() ? oldDate : Date.valueOf(dateStr);
 
-            System.out.print("新しい開始時間 (HH:mm:ss): ");
+            System.out.print("新しい開始時間 : ");
             String startStr = scanner.nextLine();
-            Time start = startStr.isEmpty() ? oldStart : Time.valueOf(startStr);
+            Time starttime = startStr.isEmpty() ? oldStarttime : Time.valueOf(startStr);
 
-            System.out.print("新しい終了時間 (HH:mm:ss): ");
+            System.out.print("新しい終了時間 : ");
             String endStr = scanner.nextLine();
-            Time end = endStr.isEmpty() ? oldEnd : Time.valueOf(endStr);
+            Time endtime = endStr.isEmpty() ? oldEndtime : Time.valueOf(endStr);
+            
+            System.out.print("新しい休憩時間 : ");
+            String breakStr = scanner.nextLine();
+            Time breaktime = breakStr.isEmpty() ? oldBreaktime : Time.valueOf(breakStr);
+            
+            System.out.print("新しい残業時間 : ");
+            String overStr = scanner.nextLine();
+            Time overtime = overStr.isEmpty() ? oldOvertime : Time.valueOf(overStr);
 
-            // 更新クエリ
-            String updateSql = "UPDATE work_attendance SET employee_name = ?, date = ?, start_time = ?, end_time = ? WHERE id = ?";
+            String updateSql = "UPDATE attendance_records SET work_date = ?, work_date = ?, start_time = ?, end_time = ?, break_time = ?, over_time = ?";
             PreparedStatement updateStmt = connection.prepareStatement(updateSql);
-            updateStmt.setString(1, name);
-            updateStmt.setDate(2, date);
-            updateStmt.setTime(3, start);
-            updateStmt.setTime(4, end);
-            updateStmt.setInt(5, id);
+            updateStmt.setDate(1, workdate);
+            updateStmt.setTime(2, starttime);
+            updateStmt.setTime(3, endtime);
+            updateStmt.setTime(4, breaktime);
+            updateStmt.setTime(5, overtime);
 
             int rowsAffected = updateStmt.executeUpdate();
             if (rowsAffected > 0) {
