@@ -1,7 +1,10 @@
 package com.example.demo;
 
 import java.io.IOException;
-import java.util.List;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -9,7 +12,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/LoginServlet")
 public class Login extends HttpServlet {
@@ -37,7 +39,7 @@ public class Login extends HttpServlet {
         try (Connection con = DriverManager.getConnection(url, user, pass);
                 PreparedStatement pstmt = con.prepareStatement(sql)) {
 
-            pstmt.setString(1, user_Id);
+            pstmt.setString(1, user_id);
             pstmt.setString(2, password);
 
             ResultSet res = pstmt.executeQuery();
@@ -58,4 +60,5 @@ public class Login extends HttpServlet {
 
     RequestDispatcher rd = request.getRequestDispatcher(path);
     rd.forward(request, response);
+    }
 }

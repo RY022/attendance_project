@@ -34,7 +34,7 @@ public class AttendanceDateRegistration {
             preparedStatement.setString(1,work_date);
             preparedStatement.setString(2,start_time);
             preparedStatement.setString(3,end_time);
-            preparedStatement.setInt(4,break_time);
+            preparedStatement.setString(4,break_time);
             
             int rowsAffected = preparedStatement.executeUpdate();
             

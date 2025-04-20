@@ -6,15 +6,15 @@ import java.sql.Time;
 import java.util.Scanner;
 
 public class SearchAttendancedate {
-    String DB_URL = "jdbc:mysql://localhost:3306/attendance_users?useSSL=false&serverTimezone=UTC";
-    String USER = "root";
-    String PASSWORD = "";
+	private static final String URL = "jdbc:mysql://localhost:3306/attendance_users?useSSL=false&serverTimezone=UTC";
+	private static final String USER = "root";
+	private static final String PASSWORD = "chaki8044";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         try {
-            Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("DBに接続しました。");
 
             String sql = "SELECT * FROM attendance_date";
@@ -25,7 +25,7 @@ public class SearchAttendancedate {
 
             while (resultSet.next()) {
                 int attendance_date = resultSet.getInt("attendance_date");
-                Date work_date = resultSet.getDate("work_date");
+                int work_date = resultSet.getInt("work_date");
                 Time start_time = resultSet.getTime("start_time");
                 Time end_time = resultSet.getTime("end_time");
                 Time break_time = resultSet.getTime("break_time");
