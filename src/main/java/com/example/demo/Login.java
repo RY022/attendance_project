@@ -1,5 +1,6 @@
 package com.example.demo;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,10 +36,10 @@ public class Login extends HttpServlet {
         String sql = "SELECT id FROM users WHERE id=? AND password=?";
 
         Class.forName("org.postgresql.Driver");
-        try (Connection con = DriverManager.getConnection(url, user, pass);
-                PreparedStatement pstmt = con.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(url, user, pass);
+                PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
-            pstmt.setString(1, user_id);
+            pstmt.setString(1, id);
             pstmt.setString(2, password);
 
             ResultSet res = pstmt.executeQuery();
