@@ -7,7 +7,7 @@ import java.sql.Time;
 import java.util.Scanner;
 
 public class SearchAttendancedate {
-	private static final String URL = "jdbc:mysql://localhost:3306/attendance_users?useSSL=false&serverTimezone=UTC";
+	private static final String URL = "jdbc:mySQL://localhost/attendance_users";
 	private static final String USER = "root";
 	private static final String PASSWORD = "chaki8044";
 

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public class Register {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/attendance_project";
+    private static final String URL = "jdbc:mySQL://localhost/attendance_users";
     private static final String USER = "root";
     private static final String PASSWORD = "chaki8044"; 
 
