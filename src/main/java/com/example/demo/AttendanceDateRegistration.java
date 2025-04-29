@@ -18,7 +18,7 @@ public class AttendanceDateRegistration {
         String end_time = scanner.nextLine();
         String break_time = scanner.nextLine();
 
-        String url = "jdbc:mysql://localhost:3306/attendance_user";
+        String url = "jdbc:mySQL://localhost/attendance_users";
         String user = "root";
         String password = "chaki8044";
 
