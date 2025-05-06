@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class AttendanceDateEditor {
 
     public static void main(String[] args) {
-        String jdbcURL = "jdbc:mySQL://localhost/attendance_users";
+        String jdbcURL = "jdbc:mySQL://localhost:3306/attendance_users";
         String dbUser = "root";
         String dbPassword = "chaki8044";
 

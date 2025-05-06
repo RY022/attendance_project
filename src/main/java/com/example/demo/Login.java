@@ -29,7 +29,7 @@ public class Login extends HttpServlet {
     String path = "menupage.html";
 
     try {
-        String url = "jdbc:mySQL://localhost/attendance_users";
+        String url = "jdbc:mySQL://localhost:3306/attendance_users";
         String user = "root";
         String pass = "chaki8044";
 

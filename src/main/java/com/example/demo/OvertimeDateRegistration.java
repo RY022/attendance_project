@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class OvertimeDateRegistration {
-	 private static final String URL = "jdbc:mySQL://localhost/attendance_users";
+	 private static final String URL = "jdbc:mySQL://localhost:3306/attendance_users";
 	 private static final String USER = "root";
 	 private static final String PASSWORD = "chaki8044";
 
