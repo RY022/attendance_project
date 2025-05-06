@@ -51,7 +51,7 @@ public class Login extends HttpServlet {
             } else {
                 request.setAttribute("loginFailure", "ログインに失敗しました");
 
-                path = "loginpage.htm";
+                path = "loginpage.html";
             }
         }
     }catch (ClassNotFoundException | SQLException e) {
