@@ -37,7 +37,7 @@ public class OvertimeDateRegistration {
                 e.printStackTrace();
             } finally {
                 try {
-                    if (stmt != null) stmt.close();
+                    if (preparedStatement != null) preparedStatement.close();
                     if (connection != null) connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
