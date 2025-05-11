@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class OvertimeDateRegistration {
-	 private static final String URL = "jdbc:mySQL://localhost:3306/attendance_users";
+	 private static final String URL = "jdbc:mysql://localhost:3306/attendance_users";
 	 private static final String USER = "root";
 	 private static final String PASSWORD = "chaki8044";
 
@@ -26,7 +26,7 @@ public class OvertimeDateRegistration {
                 stmt.setString(3,end_time);
                 stmt.setString(4,reason);
                 
-                int rowsAffected = preparedStatement.executeUpdate();
+                int rowsAffected = stmt.executeUpdate();
                 
                 if (rowsAffected > 0) {
                     System.out.println("登録されました。");
@@ -37,7 +37,7 @@ public class OvertimeDateRegistration {
                 e.printStackTrace();
             } finally {
                 try {
-                    if (preparedStatement != null) preparedStatement.close();
+                    if (stmt != null) stmt.close();
                     if (connection != null) connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
